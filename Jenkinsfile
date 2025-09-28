@@ -32,7 +32,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh '/opt/homebrew/bin/docker build -t $IMAGE_NAME .'
+                sh '/Applications/Docker.app/Contents/Resources/bin/docker build -t $IMAGE_NAME .'
             }
         }
 
