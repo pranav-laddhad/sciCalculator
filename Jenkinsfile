@@ -1,18 +1,25 @@
 pipeline {
     agent any
+    
+    // Define the tools Jenkins should use globally in this pipeline
+    tools {
+        // NOTE: Names MUST match the 'Name' you defined in Global Tool Configuration
+        // (e.g., 'Maven_3.9.4' and 'JDK_17')
+        maven 'Maven_3.9.4' 
+        jdk 'JDK_17'      
+    }
 
     environment {
-        DOCKERHUB_CREDENTIALS = 'dockerhub-cred' // Add in Jenkins credentials
+        DOCKERHUB_CREDENTIALS = 'dockerhub-cred'
         IMAGE_NAME = 'pranavladdhad/sci-calculator:0.1'
     }
 
     stages {
-        // REMOVED THE CONFLICTING 'Checkout' STAGE.
-        // The code is checked out implicitly by the SCM configuration.
+        // Stage 'Checkout' is still implicit via SCM configuration.
         
         stage('Test') {
             steps {
-                // Now runs directly in the workspace root
+                // mvn is now available because it was defined in the 'tools' block
                 sh 'mvn clean test' 
             }
         }
