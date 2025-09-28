@@ -9,8 +9,13 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'git@github.com:pranav-laddhad/sciCalculator.git'
+                sshagent(['github-ssh-key']) { // Use the ID of your SSH credential
+                    git branch: 'main', 
+                        credentialsId: 'github-ssh-key', 
+                        url: 'git@github.com:pranav-laddhad/sciCalculator.git'
+                }
             }
+
         }
 
         stage('Test') {
