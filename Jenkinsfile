@@ -7,20 +7,13 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                sshagent(['github-ssh-key']) { // Use the ID of your SSH credential
-                    git branch: 'main', 
-                        credentialsId: 'github-ssh-key', 
-                        url: 'git@github.com:pranav-laddhad/sciCalculator.git'
-                }
-            }
-
-        }
-
+        // REMOVED THE CONFLICTING 'Checkout' STAGE.
+        // The code is checked out implicitly by the SCM configuration.
+        
         stage('Test') {
             steps {
-                sh 'mvn clean test'
+                // Now runs directly in the workspace root
+                sh 'mvn clean test' 
             }
         }
 
@@ -38,7 +31,7 @@ pipeline {
 
         stage('DockerHub Push') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                     sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
                     sh 'docker push $IMAGE_NAME'
                 }
