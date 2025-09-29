@@ -12,7 +12,7 @@ pipeline {
     environment {
         DOCKERHUB_CREDENTIALS = 'dockerhub-cred'
         IMAGE_NAME = 'pranavladdhad/sci-calculator:0.1'
-        ANSIBLE_PLAYBOOK_CMD = '/Users/prana/sciCalculator/ansible_venv/bin/ansible-playbook'
+        ANSIBLE_PLAYBOOK_CMD = '/Users/prana/Desktop/SEM7/SPE/sciCalculator/ansible_venv/bin/ansible-playbook'
         DOCKER_CMD = '/Applications/Docker.app/Contents/Resources/bin/docker'
     }
 
