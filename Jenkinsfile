@@ -119,11 +119,24 @@ pipeline {
             }
         }
 
+        // stage('DockerHub Push') {
+        //     steps {
+        //         withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+        //             sh "echo $DOCKER_PASSWORD | ${DOCKER_CMD} login -u $DOCKER_USERNAME --password-stdin"
+        //             sh "${DOCKER_CMD} push $IMAGE_NAME"
+        //         }
+        //     }
+        // }
+
         stage('DockerHub Push') {
             steps {
                 withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                    sh "echo $DOCKER_PASSWORD | ${DOCKER_CMD} login -u $DOCKER_USERNAME --password-stdin"
-                    sh "${DOCKER_CMD} push $IMAGE_NAME"
+                    sh '''
+                        mkdir -p /tmp/docker-config
+                        echo '{ "credsStore": "" }' > /tmp/docker-config/config.json
+                        echo "$DOCKER_PASSWORD" | ${DOCKER_CMD} --config /tmp/docker-config login -u "$DOCKER_USERNAME" --password-stdin
+                        ${DOCKER_CMD} --config /tmp/docker-config push $IMAGE_NAME
+                    '''
                 }
             }
         }
