@@ -48,21 +48,18 @@ pipeline {
         }
 
         stage('Deploy via Ansible') {
+            // NEW: Run this stage inside a Docker container with Ansible installed.
+            agent {
+                docker {
+                    // Use a standard Docker image that includes Ansible
+                    image 'cytopia/ansible:latest'
+                    // Mount the Docker socket so Ansible can execute the Docker module commands
+                    args '-v /var/run/docker.sock:/var/run/docker.sock'
+                }
+            }
             steps {
-                // The absolute path to the virtual environment's activation script
-                sh '''
-                    # NOTE: Replace 'prana' with your actual macOS username
-                    VENV_PATH="/Users/prana/Desktop/SEM7/SPE/sciCalculator/ansible_venv"
-                    
-                    # Source the activation script to set the PATH and run Ansible
-                    source "${VENV_PATH}/bin/activate"
-                    
-                    # Run the standard command which is now available in the PATH
-                    ansible-playbook deploy.yml
-                    
-                    # Deactivate (good practice)
-                    deactivate
-                '''
+                // Ansible is now available in the container's path, and deploy.yml is in the workspace.
+                sh 'ansible-playbook deploy.yml'
             }
         }
     }
