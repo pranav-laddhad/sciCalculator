@@ -123,7 +123,7 @@ pipeline {
 
         stage('Deploy via Ansible') {
             steps {
-                // Run ansible-playbook directly using the virtualenv Python
+                // Call ansible-playbook directly using the virtualenv Python
                 sh '''
                     $VENV_PYTHON -m $ANSIBLE_MODULE deploy.yml
                 '''
