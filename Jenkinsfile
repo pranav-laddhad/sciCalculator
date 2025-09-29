@@ -141,19 +141,28 @@ pipeline {
             }
         }
 
+        // stage('Deploy via Ansible') {
+        //     // CRITICAL FIX: Minimal agent syntax to avoid Groovy parsing error
+        //     // agent {
+        //     //     docker {
+        //     //         image 'cytopia/ansible:latest'
+        //     //         args '-v /var/run/docker.sock:/var/run/docker.sock'
+        //     //     }
+        //     // }
+        //     steps {
+        //         // This stage will still fail with a permission error, but the pipeline structure will be valid.
+        //         sh 'ansible-playbook deploy.yml' 
+        //     }
+        // }
         stage('Deploy via Ansible') {
-            // CRITICAL FIX: Minimal agent syntax to avoid Groovy parsing error
-            // agent {
-            //     docker {
-            //         image 'cytopia/ansible:latest'
-            //         args '-v /var/run/docker.sock:/var/run/docker.sock'
-            //     }
-            // }
             steps {
-                // This stage will still fail with a permission error, but the pipeline structure will be valid.
-                sh 'ansible-playbook deploy.yml' 
+                sh '''
+                    source /Users/prana/Desktop/SEM7/SPE/sciCalculator/ansible_venv/bin/activate
+                    ansible-playbook deploy.yml
+                '''
             }
         }
+
     }
 
     post {
