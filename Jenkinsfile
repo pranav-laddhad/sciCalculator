@@ -1,4 +1,5 @@
 pipeline {
+    // agent any
     agent any
     
     // Define the tools Jenkins should use globally in this pipeline
@@ -8,6 +9,7 @@ pipeline {
         maven 'Maven_3.9.4' 
         jdk 'JDK_17'      
     }
+
 
     environment {
         DOCKERHUB_CREDENTIALS = 'dockerhub-cred'
