@@ -9,6 +9,12 @@
         tag: "0.1"
         source: pull
 
+    - name: Remove old container if exists
+      community.docker.docker_container:
+        name: sci-calculator
+        state: absent
+        force_kill: true
+
     - name: Run container
       community.docker.docker_container:
         name: sci-calculator
