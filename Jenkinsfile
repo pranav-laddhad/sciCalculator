@@ -49,7 +49,20 @@ pipeline {
 
         stage('Deploy via Ansible') {
             steps {
-                sh "${ANSIBLE_PLAYBOOK_CMD} deploy.yml"
+                // The absolute path to the virtual environment's activation script
+                sh '''
+                    # NOTE: Replace 'prana' with your actual macOS username
+                    VENV_PATH="/Users/prana/Desktop/SEM7/SPE/sciCalculator/ansible_venv"
+                    
+                    # Source the activation script to set the PATH and run Ansible
+                    source "${VENV_PATH}/bin/activate"
+                    
+                    # Run the standard command which is now available in the PATH
+                    ansible-playbook deploy.yml
+                    
+                    # Deactivate (good practice)
+                    deactivate
+                '''
             }
         }
     }
