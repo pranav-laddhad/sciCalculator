@@ -88,9 +88,10 @@ pipeline {
     environment {
         DOCKERHUB_CREDENTIALS = 'dockerhub-cred'
         IMAGE_NAME = 'pranavladdhad/sci-calculator:0.1'
-        VENV_PYTHON = '/Users/prana/Desktop/SEM7/SPE/sciCalculator/ansible_venv/bin/python'
+        // Assuming virtualenv inside workspace; update if different
+        VENV_PYTHON = "${env.WORKSPACE}/ansible_venv/bin/python"
         ANSIBLE_MODULE = 'ansible.cli.playbook'
-        DOCKER_CMD = '/Applications/Docker.app/Contents/Resources/bin/docker'
+        DOCKER_CMD = 'docker'  // docker in PATH
     }
 
     stages {
@@ -123,12 +124,29 @@ pipeline {
 
         stage('Deploy via Ansible') {
             steps {
-                // Call ansible-playbook directly using the virtualenv Python
                 sh '''
+                    echo "Using Python at: $VENV_PYTHON"
+                    $VENV_PYTHON --version
+                    $VENV_PYTHON -m $ANSIBLE_MODULE --version
                     $VENV_PYTHON -m $ANSIBLE_MODULE deploy.yml
                 '''
             }
         }
+
+        /*
+        // Alternative: Run Ansible inside Docker container
+        stage('Deploy via Ansible (Docker)') {
+            agent {
+                docker {
+                    image 'cytopia/ansible:latest'
+                    args '-v /var/run/docker.sock:/var/run/docker.sock'
+                }
+            }
+            steps {
+                sh 'ansible-playbook deploy.yml'
+            }
+        }
+        */
     }
 
     post {
