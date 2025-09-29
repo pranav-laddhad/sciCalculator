@@ -1,7 +1,7 @@
 - name: Deploy sciCalculator container
   hosts: localhost
   vars:
-    ansible_python_interpreter: ./ansible_venv/bin/python
+    ansible_python_interpreter: /Users/prana/Desktop/SEM7/SPE/sciCalculator/ansible_venv/bin/python
   tasks:
     - name: Pull latest Docker image
       community.docker.docker_image:
