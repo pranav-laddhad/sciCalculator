@@ -12,6 +12,8 @@ pipeline {
     environment {
         DOCKERHUB_CREDENTIALS = 'dockerhub-cred'
         IMAGE_NAME = 'pranavladdhad/sci-calculator:0.1'
+        ANSIBLE_PLAYBOOK_CMD = '/Users/prana/sciCalculator/ansible_venv/bin/ansible-playbook'
+        DOCKER_CMD = '/Applications/Docker.app/Contents/Resources/bin/docker'
     }
 
     stages {
@@ -32,22 +34,22 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh '/Applications/Docker.app/Contents/Resources/bin/docker build -t $IMAGE_NAME .'
+                sh "${DOCKER_CMD} build -t $IMAGE_NAME ."
             }
         }
 
         stage('DockerHub Push') {
             steps {
                 withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                    sh 'echo $DOCKER_PASSWORD | /Applications/Docker.app/Contents/Resources/bin/docker login -u $DOCKER_USERNAME --password-stdin'
-                    sh '/Applications/Docker.app/Contents/Resources/bin/docker push $IMAGE_NAME'
+                    sh "echo $DOCKER_PASSWORD | ${DOCKER_CMD} login -u $DOCKER_USERNAME --password-stdin"
+                    sh "${DOCKER_CMD} push $IMAGE_NAME"
                 }
             }
         }
 
         stage('Deploy via Ansible') {
             steps {
-                sh 'ansible-playbook deploy.yml'
+                sh "${ANSIBLE_PLAYBOOK_CMD} deploy.yml"
             }
         }
     }
