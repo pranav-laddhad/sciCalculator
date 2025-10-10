@@ -50,7 +50,6 @@ pipeline {
                 }
             }
         }
-
         stage('Deploy via Ansible'){// stage-6
             steps {
                 sh """
@@ -61,7 +60,6 @@ pipeline {
                 """
             }
         }
-
     }
 
     post { //  stage-7 (post-actions)
