@@ -32,9 +32,14 @@ pipeline {
 
         stage('Build Docker Image') { // stage-4
             steps {
-                sh """${DOCKER_CMD} build -t ${IMAGE_NAME} ."""
+                sh """
+                mkdir -p /tmp/docker-config
+                echo '{ "credsStore": "" }' > /tmp/docker-config/config.json
+                ${DOCKER_CMD} --config /tmp/docker-config build -t ${IMAGE_NAME} .
+                """
             }
         }
+
 
         stage('DockerHub Push') { // stage-5
             steps {
