@@ -51,7 +51,7 @@ pipeline {
             }
         }
 
-        stage('Deploy via Ansible') // stage-6
+        stage('Deploy via Ansible'){// stage-6
             steps {
                 sh """
                     /bin/bash -c '
