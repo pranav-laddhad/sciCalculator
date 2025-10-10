@@ -11,6 +11,7 @@ pipeline {
         IMAGE_NAME = 'pranavladdhad/sci-calculator:0.1'
         ANSIBLE_VENV = '/Users/prana/Desktop/SEM7/SPE/sciCalculator/ansible_venv/bin/activate'
         DOCKER_CMD = '/Applications/Docker.app/Contents/Resources/bin/docker'
+        EMAIL_RECIPIENT = 'pranav.laddhad2@gmail.com'
     }
 
     stages {
@@ -61,15 +62,39 @@ pipeline {
 
     }
 
-    post {
-        success {
-            echo 'Pipeline succeeded!'
-            // You can uncomment and configure email notifications here
-        }
-
-        failure {
-            echo 'Pipeline failed!'
-            // You can uncomment and configure email notifications here
-        }
+post {
+    success {
+        echo 'Pipeline succeeded!'
+        emailext (
+            subject: "SUCCESS: Jenkins Pipeline - sciCalculator",
+            body: """
+                <h2>Jenkins Pipeline Success</h2>
+                <p>The pipeline for <b>sciCalculator</b> completed successfully.</p>
+                <ul>
+                  <li><b>GitHub Repo:</b> <a href="https://github.com/pranav-laddhad/sciCalculator">sciCalculator</a></li>
+                  <li><b>Docker Image:</b> <a href="https://hub.docker.com/repository/docker/pranavladdhad/sci-calculator">${IMAGE_NAME}</a></li>
+                </ul>
+                <p>Build, test, and deployment all passed successfully.</p>
+            """,
+            to: "${EMAIL_RECIPIENT}",
+            mimeType: 'text/html'
+        )
     }
+
+    failure {
+        echo 'Pipeline failed!'
+        emailext (
+            subject: "FAILURE: Jenkins Pipeline - sciCalculator",
+            body: """
+                <h2>Jenkins Pipeline Failed</h2>
+                <p>The Jenkins pipeline for <b>sciCalculator</b> has failed.</p>
+                <p>Please check the Jenkins console logs for details: 
+                <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+            """,
+            to: "${EMAIL_RECIPIENT}",
+            mimeType: 'text/html'
+        )
+    }
+}
+
 }
