@@ -1,11 +1,9 @@
 pipeline {
     agent any 
-
     tools {
         maven 'Maven_3.9.4'
         jdk 'JDK_17'
     }
-
     environment {
         DOCKERHUB_CREDENTIALS = 'dockerhub-cred'
         IMAGE_NAME = 'pranavladdhad/sci-calculator:0.1'
@@ -15,26 +13,30 @@ pipeline {
     }
 
     stages {
-
-        stage('Test') {
+        stage('Checkout SCM') { // stage-1
+            steps {
+                echo 'Checking out source code from SCM...'
+                checkout scm
+            }
+        }
+        stage('Test') { // stage-2
             steps {
                 sh 'mvn clean test'
             }
         }
-
-        stage('Build JAR') {
+        stage('Build JAR') { // stage-3
             steps {
                 sh 'mvn clean package'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build Docker Image') { // stage-4
             steps {
                 sh """${DOCKER_CMD} build -t ${IMAGE_NAME} ."""
             }
         }
 
-        stage('DockerHub Push') {
+        stage('DockerHub Push') { // stage-5
             steps {
                 withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, 
                                                  passwordVariable: 'DOCKER_PASSWORD', 
@@ -49,7 +51,7 @@ pipeline {
             }
         }
 
-        stage('Deploy via Ansible') {
+        stage('Deploy via Ansible') // stage-6
             steps {
                 sh """
                     /bin/bash -c '
@@ -62,39 +64,39 @@ pipeline {
 
     }
 
-post {
-    success {
-        echo 'Pipeline succeeded!'
-        emailext (
-            subject: "SUCCESS: Jenkins Pipeline - sciCalculator",
-            body: """
-                <h2>Jenkins Pipeline Success</h2>
-                <p>The pipeline for <b>sciCalculator</b> completed successfully.</p>
-                <ul>
-                  <li><b>GitHub Repo:</b> <a href="https://github.com/pranav-laddhad/sciCalculator">sciCalculator</a></li>
-                  <li><b>Docker Image:</b> <a href="https://hub.docker.com/repository/docker/pranavladdhad/sci-calculator">${IMAGE_NAME}</a></li>
-                </ul>
-                <p>Build, test, and deployment all passed successfully.</p>
-            """,
-            to: "${EMAIL_RECIPIENT}",
-            mimeType: 'text/html'
-        )
-    }
+    post { //  stage-7 (post-actions)
+        success {
+            echo 'Pipeline succeeded!'
+            emailext (
+                subject: "SUCCESS: Jenkins Pipeline - sciCalculator",
+                body: """
+                    <h2>Jenkins Pipeline Success</h2>
+                    <p>The pipeline for <b>sciCalculator</b> completed successfully.</p>
+                    <ul>
+                      <li><b>GitHub Repo:</b> <a href="https://github.com/pranav-laddhad/sciCalculator">sciCalculator</a></li>
+                      <li><b>Docker Image:</b> <a href="https://hub.docker.com/repository/docker/pranavladdhad/sci-calculator">${IMAGE_NAME}</a></li>
+                    </ul>
+                    <p>Build, test, and deployment all passed successfully.</p>
+                """,
+                to: "${EMAIL_RECIPIENT}",
+                mimeType: 'text/html'
+            )
+        }
 
-    failure {
-        echo 'Pipeline failed!'
-        emailext (
-            subject: "FAILURE: Jenkins Pipeline - sciCalculator",
-            body: """
-                <h2>Jenkins Pipeline Failed</h2>
-                <p>The Jenkins pipeline for <b>sciCalculator</b> has failed.</p>
-                <p>Please check the Jenkins console logs for details: 
-                <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-            """,
-            to: "${EMAIL_RECIPIENT}",
-            mimeType: 'text/html'
-        )
+        failure {
+            echo 'Pipeline failed!'
+            emailext (
+                subject: "FAILURE: Jenkins Pipeline - sciCalculator",
+                body: """
+                    <h2>Jenkins Pipeline Failed</h2>
+                    <p>The Jenkins pipeline for <b>sciCalculator</b> has failed.</p>
+                    <p>Please check the Jenkins console logs for details: 
+                    <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+                """,
+                to: "${EMAIL_RECIPIENT}",
+                mimeType: 'text/html'
+            )
+        }
     }
-}
 
 }
