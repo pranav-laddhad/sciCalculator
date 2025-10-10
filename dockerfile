@@ -1,24 +1,14 @@
-# Step 1: Use Maven + JDK image to build the app
+# Build stage: compile the Java project with Maven
 FROM maven:3.9.4-eclipse-temurin-17 AS build
-
-# Set working directory
 WORKDIR /app
-
-# Copy Maven project files
 COPY pom.xml .
 COPY src ./src
-
-# Build the project and create JAR
 RUN mvn clean package
 
-# Step 2: Use lightweight JDK image for runtime
-FROM eclipse-temurin:17-jdk-jammy
-
-# Set working directory
+# Runtime stage: use multi-arch compatible JRE
+FROM eclipse-temurin:17-jre
 WORKDIR /app
-
-# Copy the built JAR from the build stage
 COPY --from=build /app/target/sciCalculator-1.0-SNAPSHOT.jar app.jar
 
-# Set default command to run the CLI app interactively
+# Run the Java application
 ENTRYPOINT ["java", "-cp", "app.jar", "com.scicalculator.Main"]
