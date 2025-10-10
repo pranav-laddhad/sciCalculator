@@ -150,36 +150,36 @@ pipeline {
     post { // stage-7
         success {
             echo 'Pipeline succeeded!'
-            emailext (
-                subject: "SUCCESS: Jenkins Pipeline - sciCalculator",
-                body: """
-                <h2>Jenkins Pipeline Success </h2>
-                <p>The pipeline for <b>sciCalculator</b> completed successfully.</p>
-                <ul>
-                  <li><b>GitHub Repo:</b> <a href="https://github.com/pranav-laddhad/sciCalculator">sciCalculator</a></li>
-                  <li><b>Docker Image:</b> <a href="https://hub.docker.com/repository/docker/pranavladdhad/sci-calculator">pranavladdhad/sci-calculator:0.1</a></li>
-                </ul>
-                <p>Build, test, and deployment all passed successfully.</p>
-                """,
-                recipientProviders: [[$class: 'DevelopersRecipientProvider']],
-                to: "${EMAIL_RECIPIENT}",
-                mimeType: 'text/html'
-            )
+            // emailext (
+            //     subject: "SUCCESS: Jenkins Pipeline - sciCalculator",
+            //     body: """
+            //     <h2>Jenkins Pipeline Success </h2>
+            //     <p>The pipeline for <b>sciCalculator</b> completed successfully.</p>
+            //     <ul>
+            //       <li><b>GitHub Repo:</b> <a href="https://github.com/pranav-laddhad/sciCalculator">sciCalculator</a></li>
+            //       <li><b>Docker Image:</b> <a href="https://hub.docker.com/repository/docker/pranavladdhad/sci-calculator">pranavladdhad/sci-calculator:0.1</a></li>
+            //     </ul>
+            //     <p>Build, test, and deployment all passed successfully.</p>
+            //     """,
+            //     recipientProviders: [[$class: 'DevelopersRecipientProvider']],
+            //     to: "${EMAIL_RECIPIENT}",
+            //     mimeType: 'text/html'
+            // )
         }
 
         failure {
-            echo 'Pipeline failed!'
-            emailext (
-                subject: "FAILURE: Jenkins Pipeline - sciCalculator",
-                body: """
-                <h2>Pipeline Failed</h2>
-                <p>The Jenkins pipeline for <b>sciCalculator</b> has failed.</p>
-                <p>Please check the Jenkins console logs for details: 
-                <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                """,
-                to: "${EMAIL_RECIPIENT}",
-                mimeType: 'text/html'
-            )
+            // echo 'Pipeline failed!'
+            // emailext (
+            //     subject: "FAILURE: Jenkins Pipeline - sciCalculator",
+            //     body: """
+            //     <h2>Pipeline Failed</h2>
+            //     <p>The Jenkins pipeline for <b>sciCalculator</b> has failed.</p>
+            //     <p>Please check the Jenkins console logs for details: 
+            //     <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+            //     """,
+            //     to: "${EMAIL_RECIPIENT}",
+            //     mimeType: 'text/html'
+            // )
         }
     }
 
