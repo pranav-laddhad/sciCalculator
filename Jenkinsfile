@@ -73,12 +73,12 @@ pipeline {
                 ansiblePlaybook(
                     playbook: 'deploy.yml',
                     inventory: 'inventory.ini',
-                    installation: 'Ansible',   // name of the Ansible installation in Jenkins global config
+                    installation: 'Ansible_Venv',   // name of the Ansible installation in Jenkins global config
                     extras: '-vvv'             // optional: for verbose debugging output
                 )
             }
         }
-                
+
     }
 
     post { //  stage-7 (post-actions)
