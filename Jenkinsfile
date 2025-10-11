@@ -58,16 +58,27 @@ pipeline {
                 }
             }
         }
-        stage('Deploy via Ansible'){// stage-6
+        // stage('Deploy via Ansible'){// stage-6
+        //     steps {
+        //         sh """
+        //             /bin/bash -c '
+        //             source ${ANSIBLE_VENV}
+        //             ansible-playbook deploy.yml
+        //             '
+        //         """
+        //     }
+        // }
+        stage('Deploy via Ansible') {
             steps {
-                sh """
-                    /bin/bash -c '
-                    source ${ANSIBLE_VENV}
-                    ansible-playbook deploy.yml
-                    '
-                """
+                ansiblePlaybook(
+                    playbook: 'deploy.yml',
+                    inventory: 'inventory.ini',
+                    installation: 'Ansible',   // name of the Ansible installation in Jenkins global config
+                    extras: '-vvv'             // optional: for verbose debugging output
+                )
             }
         }
+                
     }
 
     post { //  stage-7 (post-actions)
