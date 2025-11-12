@@ -95,7 +95,7 @@ pipeline {
                     <p>Please check the Jenkins console logs for details: 
                     <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
                 """,
-                to: "${EMAIL_RECIPIENT}",
+                to: "${EMAIL_RECIPIENT }",
                 mimeType: 'text/html'
             )
         }
