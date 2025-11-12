@@ -32,7 +32,6 @@ pipeline {
                 sh 'mvn clean package'
             }
         }
-
         stage('Build Docker Image') { // stage-4
             steps {
                 sh """
@@ -42,8 +41,6 @@ pipeline {
                 """
             }
         }
-
-
         stage('DockerHub Push') { // stage-5
             steps {
                 withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, 
@@ -58,29 +55,17 @@ pipeline {
                 }
             }
         }
-        // stage('Deploy via Ansible'){// stage-6
-        //     steps {
-        //         sh """
-        //             /bin/bash -c '
-        //             source ${ANSIBLE_VENV}
-        //             ansible-playbook deploy.yml
-        //             '
-        //         """
-        //     }
-        // }
-        stage('Deploy via Ansible') {
+        stage('Deploy via Ansible') { // stage-6
             steps {
                 ansiblePlaybook(
                     playbook: 'deploy.yml',
                     inventory: 'inventory.ini',
-                    installation: 'Ansible_Venv',   // name of the Ansible installation in Jenkins global config
-                    extras: '-vvv'             // optional: for verbose debugging output
+                    installation: 'Ansible_Venv',   
+                    extras: '-vvv'            
                 )
             }
         }
-
     }
-
     post { //  stage-7 (post-actions)
         success {
             echo 'Pipeline succeeded!'
